@@ -1,0 +1,107 @@
+version: '3'
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: php/Dockerfile
+#    volumes:
+#      - www_vol:/var/www/html
+    networks:
+      - taskmanager
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    volumes:
+#      - nginx_vol:/etc/nginx/
+#      - www_vol:/var/www/html
+    ports:
+      - "80:80"
+    networks:
+      - taskmanager
+  mariadb:
+    image: mariadb
+    restart: always
+#    volumes:
+#      - mysql_vol:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: tmroot
+      MYSQL_DATABASE: taskmanager
+      MYSQL_USER: tm
+      MYSQL_PASSWORD: tmroot
+    networks:
+      - taskmanager
+  adminer:
+    image: adminer
+    environment:
+      ADMINER_DEFAULT_SERVER: mariadb
+    ports:
+      - "81:8080"
+    networks:
+      - taskmanager
+  redis:
+    image: redis:alpine3.18
+    command: redis-server --appendonly yes --requirepass "root"
+#    volumes:
+#      - redis_vol:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - taskmanager
+  queue:
+    container_name: task-manager-queue
+    build:
+      context: .
+      dockerfile: queue/Dockerfile
+#    volumes:
+#      - www_vol:/var/www/html
+    entrypoint: ['php', '/var/www/html/task-manager/artisan', 'queue:work']
+    links:
+      - mariadb
+    restart: always
+    networks:
+      - taskmanager
+#  schedule:
+#    build:
+#      context: .
+#      dockerfile: php/Dockerfile
+#    image: php:8.2-fpm
+#    volumes:
+#      - www_vol:/var/www/html
+#    entrypoint: ['cd', '/var/www/html/task-manager && php', 'artisan', 'schedule:work']
+#    links:
+#      - mariadb
+#    restart: always
+#    networks:
+#      - taskmanager
+volumes:
+  www_vol:
+    driver: local
+    driver_opts:
+       o: bind
+       type: none
+       device: s:/docker/tm-www
+  nginx_vol:
+    driver: local
+    driver_opts:
+       o: bind
+       type: none
+       device: s:/docker/tm-www/nginx
+  mysql_vol:
+    driver: local
+    driver_opts:
+       o: bind
+       type: none
+       device: s:/docker/tm-www/mysql
+  redis_vol:
+    driver: local
+    driver_opts:
+       o: bind
+       type: none
+       device: s:/docker/tm-www/redis
+networks:
+  taskmanager:
+    name: taskmanager
