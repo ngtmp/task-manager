@@ -19,17 +19,15 @@ class TaskUserRepository {
         return $this->model::findOrFail($id);
     }
 
-    public function add(Request $request): Task
+    public function add(TaskUserDTO $dto): Task
     {
-        $dto = TaskUserDTO::fromRequest($request);
         $task = $this->find($dto->task_id);
         $task->users()->syncWithoutDetaching([$dto->user_id]);
         return $task;
     }
 
-    public function remove(Request $request): Task
+    public function remove(TaskUserDTO $dto): Task
     {
-        $dto = TaskUserDTO::fromRequest($request);
         $task = $this->find($dto->task_id);
         $task->users()->detach($dto->user_id);
         return $task;
