@@ -13,7 +13,7 @@ services:
     build:
       context: .
       dockerfile: nginx/Dockerfile
-    volumes:
+#    volumes:
 #      - nginx_vol:/etc/nginx/
 #      - www_vol:/var/www/html
     ports:

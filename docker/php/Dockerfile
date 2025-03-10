@@ -4,11 +4,9 @@ FROM php:8.3-fpm
 RUN docker-php-ext-configure pdo_mysql && docker-php-ext-install pdo_mysql
 RUN docker-php-ext-configure mysqli && docker-php-ext-install mysqli
 RUN docker-php-ext-configure exif && docker-php-ext-install exif
-RUN apt-get install -y \
-        libzip-dev \
-        zip \
-  && docker-php-ext-install zip
-
+RUN apt-get update && apt-get install -y zip libzip-dev
+RUN docker-php-ext-configure zip
+RUN docker-php-ext-install zip
 
 RUN apt-get update && apt-get install libgmp-dev -y && \
     apt-get update && apt-get install -y libgmp-dev re2c libmhash-dev libmcrypt-dev file && \
