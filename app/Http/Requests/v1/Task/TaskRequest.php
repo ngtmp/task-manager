@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\v1\Task;
 
+use App\Support\Enum\Task\TaskStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class TaskRequest extends FormRequest
 {
@@ -47,7 +49,7 @@ class TaskRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:4096'],
-            'status' => ['required', 'in:awaiting,in_progress,completed'],
+            'status' => ['required', Rule::enum(TaskStatus::class)],
         ];
     }
 
@@ -57,7 +59,7 @@ class TaskRequest extends FormRequest
             'id' => ['required', 'exists:tasks,id'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:4096'],
-            'status' => ['required', 'in:awaiting,in_progress,completed'],
+            'status' => ['required', Rule::enum(TaskStatus::class)],
         ];
     }
 
@@ -67,7 +69,7 @@ class TaskRequest extends FormRequest
             'id' => ['required', "exists:tasks,id"],
             'title' => ['required_without_all:description,status', 'string', 'max:255'],
             'description' => ['required_without_all:title,status', 'string', 'max:4096'],
-            'status' => ['required_without_all:title,description', 'in:awaiting,in_progress,completed'],
+            'status' => ['required_without_all:title,description', Rule::enum(TaskStatus::class)],
         ];
     }
 

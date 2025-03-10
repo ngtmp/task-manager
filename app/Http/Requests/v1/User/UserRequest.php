@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\v1\User;
 
+use App\Support\Enum\User\UserStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UserRequest extends FormRequest
 {
@@ -47,7 +49,7 @@ class UserRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'max:255', 'unique:users,email'],
-            'status' => ['required', 'in:at_work,on_vacation'],
+            'status' => ['required', Rule::enum(UserStatus::class)],
         ];
     }
 
@@ -57,7 +59,7 @@ class UserRequest extends FormRequest
             'id' => ['required', "exists:users,id"],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'max:255', "unique:users,email,{$this->id}"],
-            'status' => ['required', 'in:at_work,on_vacation'],
+            'status' => ['required', Rule::enum(UserStatus::class)],
         ];
     }
 
@@ -67,7 +69,7 @@ class UserRequest extends FormRequest
             'id' => ['required', "exists:users,id"],
             'name' => ['required_without_all:email,status', 'string', 'max:255'],
             'email' => ['required_without_all:name,status', 'string', 'max:255', "unique:users,email,{$this->id}"],
-            'status' => ['required_without_all:name,email', 'in:at_work,on_vacation'],
+            'status' => ['required_without_all:name,email', Rule::enum(UserStatus::class)],
         ];
     }
 

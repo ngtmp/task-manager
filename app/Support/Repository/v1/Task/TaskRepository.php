@@ -11,4 +11,15 @@ class TaskRepository extends ModelRepository {
     protected $model = Task::class;
     protected $dto = TaskDTO::class;
 
+
+    public function group()
+    {
+        return $this->model::orderBy('tasks.status');
+    }
+
+    public function status($status)
+    {
+        return $this->model::where('tasks.status', $status);
+    }
+
 }

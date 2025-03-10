@@ -29,7 +29,8 @@ Route::middleware(['throttle:task-store'])->group(function () {
     //Route::post('task', [\App\Http\Controllers\Api\v1\TaskController::class, 'store']);
 });
 
-
+Route::get('task/status/group', [\App\Http\Controllers\Api\v1\TaskStatusController::class, 'group']);
+Route::get('task/status/{status}', [\App\Http\Controllers\Api\v1\TaskStatusController::class, 'status'])->where('status', '^'.\App\Support\Enum\Task\TaskStatus::forRoute().'$');
 
 Route::post('task/{task}/user/add/{user}', [\App\Http\Controllers\Api\v1\TaskUserController::class, 'add'])->where('user', '^\d+$');
 Route::post('task/{task}/user/remove/{user}', [\App\Http\Controllers\Api\v1\TaskUserController::class, 'remove'])->where('user', '^\d+$');
