@@ -7,6 +7,7 @@ use App\Http\Requests\v1\Task\TaskRequest;
 use App\Http\Resources\v1\Task\TaskCollection;
 use App\Http\Resources\v1\Task\TaskResource;
 use App\Models\Task;
+use App\Support\DTO\v1\Task\TaskDTO;
 use App\Support\Repository\v1\Task\TaskRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -27,19 +28,20 @@ class TaskController extends Controller
 
     public function store(TaskRequest $taskRequest, TaskRepository $repository): Response|TaskResource
     {
-        $task = $repository->store($taskRequest);
+        $dto = TaskDTO::fromRequest($taskRequest);
+        $task = $repository->store($dto);
         return new TaskResource($task->load($this->load()));
     }
 
     public function update(TaskRequest $taskRequest, TaskRepository $repository): Response|TaskResource
     {
-        $task = $repository->update($taskRequest);
+        $task = $repository->update($taskRequest->validated(), $taskRequest->getMethod());
         return new TaskResource($task->load($this->load()));
     }
 
     public function destroy(TaskRequest $taskRequest, TaskRepository $repository): Response|TaskResource
     {
-        $task = $repository->destroy($taskRequest);
+        $task = $repository->destroy($taskRequest->id);
         return new Response([], 204);
     }
 }

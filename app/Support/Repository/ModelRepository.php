@@ -20,32 +20,31 @@ class ModelRepository implements Repository {
         return $this->model::findOrFail($id);
     }
 
-    public function store(Request $request): Model
+    public function store($dto): Model
     {
-        $dto = $this->dto::fromRequest($request);
         $model = new $this->model((array)$dto);
         $model->save();
         return $model;
     }
 
-    public function update(Request $request): Model
+    public function update(array $data, string $method): Model
     {
-        $model = $this->find($request->id);
-        switch ($request->getMethod()) {
+        $model = $this->find($data['id']);
+        switch ($method) {
             case 'PATCH':
-                $model->fill($request->validated());
+                $model->fill($data);
                 break;
             default:
-                $dto = $this->dto::fromRequest($request);
+                $dto = $this->dto::fromArray($data);
                 $model->fill((array)$dto);
         }
         $model->save();
         return $model;
     }
 
-    public function destroy(Request $request)
+    public function destroy($id)
     {
-        $model = $this->find($request->id);
+        $model = $this->find($id);
         $model->delete();
     }
 

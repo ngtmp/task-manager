@@ -7,6 +7,7 @@ use App\Http\Requests\v1\User\UserRequest;
 use App\Http\Resources\v1\User\UserCollection;
 use App\Http\Resources\v1\User\UserResource;
 use App\Models\User;
+use App\Support\DTO\v1\User\UserDTO;
 use App\Support\Repository\v1\User\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -29,19 +30,20 @@ class UserController extends Controller
 
     public function store(UserRequest $userRequest, UserRepository $repository): Response|UserResource
     {
-        $user = $repository->store($userRequest);
+        $dto = UserDTO::fromRequest($userRequest);
+        $user = $repository->store($dto);
         return new UserResource($user->load($this->load()));
     }
 
     public function update(UserRequest $userRequest, UserRepository $repository): Response|UserResource
     {
-        $user = $repository->update($userRequest);
+        $user = $repository->update($userRequest->validated(), $userRequest->getMethod());
         return new UserResource($user->load($this->load()));
     }
 
     public function destroy(UserRequest $userRequest, UserRepository $repository): Response|UserResource
     {
-        $user = $repository->destroy($userRequest);
+        $user = $repository->destroy($userRequest->id);
         return new Response([], 204);
     }
 }

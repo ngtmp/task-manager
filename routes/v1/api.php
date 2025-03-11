@@ -24,9 +24,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::apiResource('user', \App\Http\Controllers\Api\v1\UserController::class);
 Route::apiResource('task', \App\Http\Controllers\Api\v1\TaskController::class)->except('create');
-Route::post('task', [\App\Http\Controllers\Api\v1\TaskController::class, 'store']);
+//Route::post('task', [\App\Http\Controllers\Api\v1\TaskController::class, 'store']);
 Route::middleware(['throttle:task-store'])->group(function () {
-    //Route::post('task', [\App\Http\Controllers\Api\v1\TaskController::class, 'store']);
+    Route::post('task', [\App\Http\Controllers\Api\v1\TaskController::class, 'store']);
 });
 
 Route::get('task/status/group', [\App\Http\Controllers\Api\v1\TaskStatusController::class, 'group']);
