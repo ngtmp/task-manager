@@ -3,15 +3,17 @@
 namespace App\Models;
 
 use App\Support\Model\Trait\Task\TaskAutoAssign;
+use App\Support\Model\Trait\Task\TaskUserNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 
 class Task extends Model
 {
-    use HasFactory, SoftDeletes;
-    use TaskAutoAssign;
+    use HasFactory, SoftDeletes, Notifiable;
+    use TaskAutoAssign, TaskUserNotification;
 
 
     /**

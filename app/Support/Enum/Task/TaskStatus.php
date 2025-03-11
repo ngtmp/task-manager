@@ -10,4 +10,14 @@ enum TaskStatus: string {
     case in_progress = 'in_progress';
     case completed = 'completed';
 
+    public static function ru($name)
+    {
+        $ru = [
+            'awaiting' => 'К выполнению',
+            'in_progress' => 'В работе',
+            'completed' => 'Выполнена',
+        ];
+        return $ru[$name];
+    }
+
 }
